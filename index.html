@@ -18,11 +18,15 @@
         border: solid 1px darkblue;
         background-color: aqua;
     }
+    .green{
+        background-color: green;
+    }
 </style>
 <body>
     <h1>Space Invaders</h1>
     <div id="TestDisplay"></div>
     <div id="Tiles" class="TileDiv"></div>
+    <button onclick="stopEnemy()">Attack</button>
 </body>
 <script>
 let text = new String;
@@ -35,5 +39,56 @@ for (let i=0;i<100;i++){
     tile.id = i;
     tiles.append(tile);        
 }
+let moveArray = [];
+for(let j=0;j<10;j++){
+    let b = j*10;
+    for(let i=0;i<10;i++){
+        if (j%2){
+            let a = 9-i;
+            a += b;
+            moveArray.push(a);    
+        }
+        else{
+            let a = i + b;
+            moveArray.push(a);
+        }
+    }
+}
+//console.log(moveArray);
+let alienPos = 0;
+
+function aliensMov(){}
+let alienMove = setInterval(
+    function aMove(){
+        let a = moveArray[alienPos];     
+        if(alienPos>0){
+            let p = alienPos-1;
+            let b = moveArray[p];
+            document.getElementById(`${b}`).classList.remove("green");
+        }           
+        document.getElementById(`${a}`).classList.add("green");
+        alienPos += 1;  
+        if(alienPos>99){
+        clearInterval(alienMove);
+        }      
+    },1000);
+
+function stopEnemy(){
+    clearInterval(alienMove);
+    let a = moveArray[(alienPos-1)];
+    if(a<0){
+        a = alienPos;
+    }    
+    document.getElementById(`${a}`).style.backgroundColor = "red";
+    alienPos = 0;
+}
+    
+/*for(let i=0;i<100;i++){
+    let b = (1000*i)+1000;
+    setTimeout(function alienMove() {
+        document.getElementById(`${alienPos}`).classList.add("green");
+        alienPos += 1;
+    },b);
+}*/
 </script>
 </html>
