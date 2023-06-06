@@ -121,7 +121,7 @@ for(let i=0;i<alienPos.length;i++){
     let a = alienPos[i];
     let b = moveArray[a];
     document.getElementById(`${b}`).classList.add("yellow");
-    alive.push(1);
+    alive.push(true);
 }
 //console.log(alive);
 
@@ -164,11 +164,22 @@ setTimeout(
 
 let alienHit = setInterval(
     function alienFire(){
-        let senderID = Math.floor(Math.random()*ships);
-        let sender = alienPos[senderID];
+        let front = alive.slice(7);
+        let back = alive.slice(-7);
+        let sender;
+        //console.log(front,back);
+        let senderID = Math.floor(Math.random()*7);
+        if(front.indexOf(true)==-1){
+            sender = alienPos[senderID];
+        }
+        else{
+            let toBack = senderID + 7;
+            sender = alienPos[toBack];
+        }
+        
         console.log(sender,(sender%15));
 
-        let a = rATCombined[0];
+        let a = 150+(sender%15);
         if(bunkers.indexOf(a)==-1){
             document.getElementById(`${a}`).classList.add("blue");
         }
@@ -176,8 +187,8 @@ let alienHit = setInterval(
             document.getElementById(`${a}`).classList.remove("green");
             document.getElementById(`${a}`).classList.add("blue");
         }
-        rATCombined.push(a);
-        rATCombined.shift();      
+       // rATCombined.push(a);
+       // rATCombined.shift();      
         
         if(gameOver == true){
             clearInterval(alienHit);
@@ -187,20 +198,22 @@ let alienHit = setInterval(
 let alienMove = setInterval(
     function aMove(){             
         for(let i=0;i<ships;i++){
-            let num = alienPos[i];
-            let a = moveArray[num];
-            let p = num-1;
-            let prev = moveArray[p];
-            document.getElementById(`${prev}`).classList.remove("yellow");
-            document.getElementById(`${a}`).classList.add("yellow");
-            alienPos[i] += 1;
-        }   
+            if(alive[i]==true){
+                let num = alienPos[i];
+                let a = moveArray[num];
+                let p = num-1;
+                let prev = moveArray[p];
+                document.getElementById(`${prev}`).classList.remove("yellow");
+                document.getElementById(`${a}`).classList.add("yellow");
+                alienPos[i] += 1;
 
-        if(alienPos[0]>149){
-        clearInterval(alienMove);
-        endGame();      
-        gameOver = true;
-        }      
+                if(alienPos[i]>149){
+                    clearInterval(alienMove);
+                    endGame();      
+                    gameOver = true;
+                }      
+            }
+        }           
     },1000);
 
 function endGame(){
@@ -230,7 +243,37 @@ function endGame(){
             document.getElementById("GameOver").innerHTML = "GAME OVER";
         },3000);
 }
+function attack(){
+    let r = Math.floor(Math.random()*ships);
+    if(alive[r]==true){
+        alive[r]=false;
+        let num = alienPos[r];
+        let p = num -1;
+        let prev = moveArray[p];
+        document.getElementById(`${prev}`).classList.remove("yellow");
+    }
+    console.log(alive);
 
+    /*
+    
+        let path = [];
+        for(let i=playerPos;i>-1;i-15){
+            path.push(i);
+        };
+        let a = path[0];
+        document.getElementById(`${a}`).classList.add("blue");        
+        
+        let firing = setInterval(
+            function fireUp(){
+                let a = path[0];
+                document.getElementById(`${a}`).classList.add("blue");
+                path.shift();
+                if(path.length==0){
+                    clearInterval(firing);
+                }
+            }
+        ,1000);    */
+}
 /*function attack(){ // needs fixing, remove 2 when done
     clearInterval(alienMove);
     let a = moveArray[(alienPos[0]-1)];
