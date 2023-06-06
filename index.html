@@ -27,19 +27,21 @@
     .player{
         background-color: red;
     }
+    .blue{
+        background-color: blue;
+    }
 
 </style>
 <body>
-    <h1>Space Invaders</h1>
-    <div id="TestDisplay"></div>
+    <h1>Space Invaders</h1>    
     <div id="Tiles" class="TileDiv"></div>
-    <button onclick="stopEnemy()">Attack</button>
+    <button onclick="attack()">Attack</button>
     <div id="Remaining"></div>
+    <button onclick="moveLeft()">Move Left</button>
+    <button onclick="moveRight()">Move Right</button>
+    <div id="GameOver"></div>
 </body>
 <script>
-let text = new String;
-text = "hello" + "<br>" + "world";
-document.getElementById("TestDisplay").innerHTML = text;
 let tiles = document.getElementById("Tiles");
 for (let i=0;i<180;i++){
     let tile = document.createElement('div');
@@ -67,12 +69,14 @@ for(let j=0;j<10;j++){
 /*
 new Variables
 Lives = 3;
-GameOver = false;
+
 RandTime = [];
 FirePath = [];
 AlienFirePath = [];
 
 */
+
+gameOver = false;
 
 let alienRow1 = [13,11,9,7,5,3,1];
 let alienRow2 = [];
@@ -86,6 +90,32 @@ let ships = 14;
 //console.log(alienPos);
 let alive = []
 let bunkers = [151,152,155,156,159,160,163,164];
+let randAlienTarget = [];
+let rAT2 = [];
+let rATCombined = [];
+
+for(let i=150;i<165;i++){
+    randAlienTarget.push(i);
+    rAT2.push(i);
+}
+
+let shuffle = function (array) {
+    var currentIndex = array.length;
+    var temporaryValue, randomIndex;
+
+    while (0 !== currentIndex) {            
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;            
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }        
+};
+
+shuffle(randAlienTarget);
+shuffle(rAT2);
+rATCombined = randAlienTarget.concat(rAT2);
+//console.log(rATCombined);
 
 for(let i=0;i<alienPos.length;i++){
     let a = alienPos[i];
@@ -99,14 +129,29 @@ let playerPos = 165;
 
 document.getElementById(`${playerPos}`).classList.add("player");
 
+function moveLeft(){
+    if(playerPos>165 && gameOver==false){
+        document.getElementById(`${playerPos}`).classList.remove("player");
+        playerPos -= 1;
+        document.getElementById(`${playerPos}`).classList.add("player");
+    }
+}
+
+function moveRight(){
+    if(playerPos<179 && gameOver==false){
+        document.getElementById(`${playerPos}`).classList.remove("player");
+        playerPos += 1;
+        document.getElementById(`${playerPos}`).classList.add("player");
+    }
+}
+
 document.getElementById("Remaining").innerHTML = ships;
 
 
-    for(let i=0;i<bunkers.length;i++){
-        let a = bunkers[i];
-        document.getElementById(`${a}`).classList.add("green");
-    }    
-
+for(let i=0;i<bunkers.length;i++){
+    let a = bunkers[i];
+    document.getElementById(`${a}`).classList.add("green");
+}    
 
 setTimeout(
     function initial() {
@@ -117,7 +162,28 @@ setTimeout(
         }
     },1000);
 
-function aliensMov(){}
+let alienHit = setInterval(
+    function alienFire(){
+        let senderID = Math.floor(Math.random()*ships);
+        let sender = alienPos[senderID];
+        console.log(sender,(sender%15));
+
+        let a = rATCombined[0];
+        if(bunkers.indexOf(a)==-1){
+            document.getElementById(`${a}`).classList.add("blue");
+        }
+        else{
+            document.getElementById(`${a}`).classList.remove("green");
+            document.getElementById(`${a}`).classList.add("blue");
+        }
+        rATCombined.push(a);
+        rATCombined.shift();      
+        
+        if(gameOver == true){
+            clearInterval(alienHit);
+        }
+    },4000);
+
 let alienMove = setInterval(
     function aMove(){             
         for(let i=0;i<ships;i++){
@@ -128,14 +194,44 @@ let alienMove = setInterval(
             document.getElementById(`${prev}`).classList.remove("yellow");
             document.getElementById(`${a}`).classList.add("yellow");
             alienPos[i] += 1;
-        }       
-        
+        }   
+
         if(alienPos[0]>149){
         clearInterval(alienMove);
+        endGame();      
+        gameOver = true;
         }      
     },1000);
 
-function stopEnemy2(){ // needs fixing, remove 2 when done
+function endGame(){
+    let instant = false;
+    setTimeout(
+        function(){document.getElementById("150").classList.add("blue");
+        },1000);
+    setTimeout(
+        function (){
+            if(playerPos == 165){
+                document.getElementById(`${playerPos}`).classList.remove("player");
+                document.getElementById("165").classList.add("blue");
+                instant = true;
+            }
+            else{
+            document.getElementById("165").classList.add("blue");
+            }
+        },2000);
+    setTimeout(
+        function (){
+            if(instant==false){
+                document.getElementById(`${playerPos}`).classList.remove("player");
+            }
+            for(let i=166;i<180;i++){
+                document.getElementById(`${i}`).classList.add("blue");
+            }
+            document.getElementById("GameOver").innerHTML = "GAME OVER";
+        },3000);
+}
+
+/*function attack(){ // needs fixing, remove 2 when done
     clearInterval(alienMove);
     let a = moveArray[(alienPos[0]-1)];
     if(a<0){
@@ -143,6 +239,6 @@ function stopEnemy2(){ // needs fixing, remove 2 when done
     }    
     document.getElementById(`${a}`).style.backgroundColor = "red";
     alienPos[0] = 0;
-}
+}*/
 </script>
 </html>
