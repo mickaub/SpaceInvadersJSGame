@@ -95,7 +95,7 @@ for(let i=0;i<7;i++){
 let alienPos = alienRow2.concat(alienRow1);
 let ships = 14;
 let shipsRemaining = 14;
-//console.log(alienPos);
+console.log(alienPos);
 let alive = []
 let bunkers = [151,152,155,156,159,160,163,164];
 //let randAlienTarget = [];
@@ -170,7 +170,7 @@ setTimeout(
             let p = moveArray[a];
             document.getElementById(`${p}`).classList.remove("yellow");
         }
-        aFiring = true;
+        //aFiring = true;
     },1000);
 
 /*let alienHit = setInterval(
@@ -209,10 +209,15 @@ setTimeout(
 let alienRealPos = alienPos.slice();
 let moveL = false;
 let moveR = false;
-let pFiring = false;
+let pFiring = false; //temp
+let pFiring1 = false;
+let pFiring2 = false;
 
-let attPos = 0;
+let attPos = 0;//temp
+let attPos1 = 0;
+let attPos2 = 0;
 let init = 0;
+let alienInit = false;
 /*
 alien attack
 player attack
@@ -223,14 +228,58 @@ player move DONE
 */
 let alienMove = setInterval(
     function aMove(){         
+        let attacker = 0;
+        function findAttacker(){
+            for(let i=0;i<alive.length;i++){
+                if(alive[i]==true){
+                    attacker = alienRealPos[i];
+                    return;
+                }
+            }
+        }
         
+        findAttacker();
+       // console.log(attacker);
 
-       
+       info = alienAttCountDown; //temp
+        document.getElementById("Info").innerHTML = alienAttCountDown; //temp
+        if(aFiring==false&&alienAttCountDown>0){ //alien attack prep
+            alienAttCountDown -= 1;
+        }         
+        if(alienAttCountDown==0){ //alien attack ready
+            aFiring = true;            
+            console.log("ready");
+            alienAttCountDown = 4;
+        }
+
+       if(aFiring==true){
+            if(alienInit==false){
+                alienAttackPos = attacker + 15;
+                document.getElementById(`${alienAttackPos}`).classList.add("blue");
+                alienInit = true;
+            }
+            else{
+                if(alienAttackPos<1){ //temp
+                    alienAttackPos = 1;
+
+                }
+                document.getElementById(`${alienAttackPos}`).classList.remove("blue");
+                if(alienAttackPos>164){
+                    aFiring = false;
+                    alienInit = false;
+                }
+                else{
+                alienAttackPos += 15;
+                document.getElementById(`${alienAttackPos}`).classList.add("blue");
+                }
+            }
+        alienAttackPos
+       }
         
 
         if(pFiring==true){
            // attPos = playerPos - 15;
-            
+            attPos = playerPos - 15;
             init = attPos + 15;
             if(attPos<150){
                 document.getElementById(`${init}`).classList.remove("blue");
@@ -248,68 +297,123 @@ let alienMove = setInterval(
             
         }
 
+        if(pFiring1==true){
+            
+            attPos1 = playerPos - 15;
+            //init = attPos + 15;
+            if(attPos1<150){
+                document.getElementById(`${init}`).classList.remove("blue");
+            }     
+            
+            if(attPos1<15){
+                pFiring1=false;
+                attPos1 = 0;
+                //init = 0;
+            }
+            else{
+                document.getElementById(`${attPos1}`).classList.add("blue");
+                attPos1 -= 15;   
+            }
+            
+        }
+
         if(alienAttackPos == playerPos){ //player death
             document.getElementById(`${playerPos}`).classList.remove("red");    
             document.getElementById(`${playerPos}`).classList.remove("blue"); 
+            aFiring = false;
             death(playerPos);
             lives -= 1;
+            alienAttackPos = -1;
             document.getElementById("Lives").innerHTML = lives; 
             if(lives==0){
                     clearInterval(alienMove);                         
                     gameOver = true;
+                    document.getElementById("GameOver").innerHTML = "GAME OVER";
             }    
         }
 
-        if(alienRealPos.indexOf(attPos)!==-1){ //alien death
-                let i = alienRealPos.indexOf(attPos);  
-                alienRealPos[i] = -1;  
-                alive[i] = false;    
-                document.getElementById(`${attPos}`).classList.remove("yellow");    
-                document.getElementById(`${attPos}`).classList.remove("blue");        
-                death(attPos);
-                shipsRemaining -= 1;//temp
-                document.getElementById("Remaining").innerHTML = shipsRemaining;//temp
-                console.log(shipsRemaining);//temp
-                pFiring=false;
+        if(alienRealPos.indexOf(attPos1)!==-1 || alienRealPos.indexOf(attPos2)!==-1){ //alien death
+            let i = 0;
+            if(alienRealPos.indexOf(attPos1)!==-1){
+                i = alienRealPos.indexOf(attPos1); 
+                pFiring1 = false;
+            }
+            if(alienRealPos.indexOf(attPos2)!==-1){
+                i = alienRealPos.indexOf(attPos2); 
+                pFiring2 = false;
+            }
+            let area = alienRealPos[i];
+               
+            document.getElementById(`${area}`).classList.remove("yellow");    
+            document.getElementById(`${area}`).classList.remove("blue");   
+            alienRealPos[i] = -1;  
+            death(area);
+            alive[i] = false;      
+            
+            shipsRemaining -= 1;//temp
+            document.getElementById("Remaining").innerHTML = shipsRemaining;//temp
+            console.log(shipsRemaining);//temp
+            
         }
 
-        info = alienAttCountDown; //temp
-        document.getElementById("Info").innerHTML = info; //temp
-        if(aFiring==false&&alienAttCountDown>0){ //alien attack prep
-            alienAttCountDown -= 1;
-        }         
-        if(alienAttCountDown==0){ //alien attack ready
-            aFiring = true;            
-        }
+        
 
-        if(alienAttackPos==attPos){ // all bunker deaths
+        if(alienAttackPos==attPos1){ // all bunker deaths
             cancel == true;
-            if(bunkers.indexOf(attPos)!==-1){
-                let a = bunkers.indexOf(attPos);
+            if(bunkers.indexOf(attPos1)!==-1){
+                let a = bunkers.indexOf(attPos1);
                 bunkers[a] = -1;
-                document.getElementById(`${attPos}`).classList.remove("green");
-                death(attPos); 
+                document.getElementById(`${attPos1}`).classList.remove("green");
+                death(attPos1); 
             }
             aFiring = false;
-            pFiring = false;
+            pFiring1 = false;
+        }  
+
+        if(alienAttackPos==attPos2){ // all bunker deaths
+            cancel == true;
+            if(bunkers.indexOf(attPos2)!==-1){
+                let a = bunkers.indexOf(attPos2);
+                bunkers[a] = -1;
+                document.getElementById(`${attPos2}`).classList.remove("green");
+                death(attPos2); 
+            }
+            aFiring = false;
+            pFiring2 = false;
         }  
         
         if(bunkers.indexOf(alienAttackPos)!==-1&&cancel==false){
-            let a = bunkers.indexOf(attPos);
+            let a = bunkers.indexOf(alienAttackPos);
             bunkers[a] = -1;
-            document.getElementById(`${attPos}`).classList.remove("green");
-            death(attPos);
+            document.getElementById(`${alienAttackPos}`).classList.remove("green");
+            death(alienAttackPos);
             //attPos -= 180;        
             aFiring=false;        
         }
-        if(bunkers.indexOf(attPos)!==-1&&cancel==false){
-            let a = bunkers.indexOf(attPos);
+        if(bunkers.indexOf(attPos1)!==-1&&cancel==false){
+            let a = bunkers.indexOf(attPos1);
             bunkers[a] = -1;
-            document.getElementById(`${attPos}`).classList.remove("green");
-            death(attPos);
+            document.getElementById(`${attPos1}`).classList.remove("green");
+            death(attPos1);
             //attPos -= 180;        
-            pFiring=false;        
+            pFiring1=false;        
         }
+
+        if(bunkers.indexOf(attPos2)!==-1&&cancel==false){
+            let a = bunkers.indexOf(attPos2);
+            bunkers[a] = -1;
+            document.getElementById(`${attPos2}`).classList.remove("green");
+            death(attPos2);
+            //attPos -= 180;        
+            pFiring2=false;        
+        }
+
+        if(alive.indexOf(true)==-1){
+            clearInterval(alienMove);
+            //endGame();      
+            gameOver = true;
+        }
+
         for(let i=0;i<ships;i++){ //alien move
             if(alive[i]==true){
                 let num = alienPos[i];
@@ -383,8 +487,20 @@ function iden(){
 }
 
 function attack(){
-    pFiring = true;
-    attPos = playerPos - 15;
+    if(pFiring1 == true){
+        if(pFiring2 == true){
+            return;
+        }
+        pFiring2 = true;
+        return;
+    }
+    if(pFiring2 == true){
+        pFiring1 = true;
+        return;
+    }
+    pFiring1 = true;
+   // pFiring = true; //temp
+   // attPos = playerPos - 15;
 }
    /* let r = Math.floor(Math.random()*ships);
     if(alive[r]==true){
