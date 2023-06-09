@@ -35,6 +35,7 @@
     <h1>Space Invaders</h1>    
     <div id="Tiles" class="TileDiv"></div>
     <button onclick="attack()">Attack</button>    
+    <br>
     <button onclick="moveLeft()">Move Left</button>
     <button onclick="moveRight()">Move Right</button>
     <div id="GameOver"></div>      
@@ -112,7 +113,7 @@ for(let i=0;i<bunkers.length;i++){
     document.getElementById(`${a}`).classList.add("green");
 }    
 
-document.getElementById("Lives").innerHTML = "Lives" + lives;
+document.getElementById("Lives").innerHTML = "Lives: " + lives;
 document.getElementById(`${playerPos}`).classList.add("player");
 
 setTimeout(
@@ -201,7 +202,7 @@ let alienMove = setInterval(
            // death(playerPos);
             lives -= 1;
             alienAttackPos = -1;
-            document.getElementById("Lives").innerHTML = "Lives" + lives; 
+            document.getElementById("Lives").innerHTML = "Lives: " + lives; 
             if(lives==0){
                     clearInterval(alienMove);                         
                     gameOver = true;
@@ -398,6 +399,14 @@ function attack(){
         attPos2 = playerPos - 15;
         document.getElementById(`${attPos2}`).classList.add("blue");
         setTimeout(document.getElementById(`${attPos2}`).classList.remove("blue"),1000);
+        if(bunkers.indexOf(attPos2)!==-1 && attPos2 !==-1){ //hit 2 on bunker
+            let a = bunkers.indexOf(attPos2);
+            bunkers[a] = -1;
+            document.getElementById(`${attPos2}`).classList.remove("green");
+            document.getElementById(`${attPos2}`).classList.remove("blue");              
+            pFiring2=false;       
+            attPos2 = -1;  
+        }
         return;
     }
     if(pFiring2 == true){
@@ -405,12 +414,29 @@ function attack(){
         attPos1 = playerPos - 15;
         document.getElementById(`${attPos1}`).classList.add("blue");
         setTimeout(document.getElementById(`${attPos1}`).classList.remove("blue"),1000);
+        if(bunkers.indexOf(attPos1)!==-1 && attPos1 !==-1){ //player 1 on bunker
+            let a = bunkers.indexOf(attPos1);
+            bunkers[a] = -1;
+            document.getElementById(`${attPos1}`).classList.remove("green");
+            document.getElementById(`${attPos1}`).classList.remove("blue");           
+            pFiring1=false;       
+            attPos1 = -1;  
+        }
         return;
     }
     pFiring1 = true;
     attPos1 = playerPos - 15;
     document.getElementById(`${attPos1}`).classList.add("blue");
     setTimeout(document.getElementById(`${attPos1}`).classList.remove("blue"),1000);  
+    if(bunkers.indexOf(attPos1)!==-1 && attPos1 !==-1){ //player 1 on bunker
+            let a = bunkers.indexOf(attPos1);
+            bunkers[a] = -1;
+            document.getElementById(`${attPos1}`).classList.remove("green");
+            document.getElementById(`${attPos1}`).classList.remove("blue");
+           // death(attPos1);    
+            pFiring1=false;       
+            attPos1 = -1;  
+        }
 }
 
 </script>
