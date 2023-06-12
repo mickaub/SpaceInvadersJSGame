@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"> <!--Started 30 May-->
 <head>
-<title>
+<title> Space Invaders JS
 </title>
 <meta charset="UFT-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0" />
@@ -44,14 +44,12 @@
 <script>
 let tiles = document.getElementById("Tiles");
 let alienAttCountDown = 4;
-//let info = "";//temp
 let moveArray = [];
 let gameOver = false;
 let alienRow1 = [13,11,9,7,5,3,1];
 let alienRow2 = [];
 let bunkers = [151,152,155,156,159,160,163,164];
 let alive = []
-//let shipsRemaining = 14; //temp
 let ships = 14;
 let aFiring = false;
 let alienAttackPos = 0;
@@ -61,14 +59,11 @@ let pFiring1 = false;
 let pFiring2 = false;
 let moveL = false;
 let moveR = false;
-//let pFiring = false; //temp
 let playerPos = 165;
-//let attPos = 0;//temp
 let attPos1 = 0;
 let attPos2 = 0;
-//let init = 0; //temp
 let alienInit = false;
-//let attackFunc = false;
+
 
 for (let i=0;i<180;i++){
     let tile = document.createElement('div');
@@ -198,8 +193,7 @@ let alienMove = setInterval(
         if(alienAttackPos == playerPos){ //player death
             document.getElementById(`${playerPos}`).classList.remove("red");    
             document.getElementById(`${playerPos}`).classList.remove("blue"); 
-            aFiring = false;
-           // death(playerPos);
+            aFiring = false;           
             lives -= 1;
             alienAttackPos = -1;
             document.getElementById("Lives").innerHTML = "Lives: " + lives; 
@@ -239,8 +233,7 @@ let alienMove = setInterval(
                 let a = bunkers.indexOf(attPos1);
                 bunkers[a] = -1;
                 document.getElementById(`${attPos1}`).classList.remove("green");
-                document.getElementById(`${attPos1}`).classList.remove("blue");
-               // death(attPos1); 
+                document.getElementById(`${attPos1}`).classList.remove("blue");               
             }
             pFiring2 = false;
             pFiring1 = false;
@@ -254,8 +247,7 @@ let alienMove = setInterval(
                 let a = bunkers.indexOf(attPos1);
                 bunkers[a] = -1;
                 document.getElementById(`${attPos1}`).classList.remove("green");
-                document.getElementById(`${attPos1}`).classList.remove("blue");
-               // death(attPos1); 
+                document.getElementById(`${attPos1}`).classList.remove("blue");              
             }
             aFiring = false;
             pFiring1 = false;
@@ -269,8 +261,7 @@ let alienMove = setInterval(
                 let a = bunkers.indexOf(attPos2);
                 bunkers[a] = -1;
                 document.getElementById(`${attPos2}`).classList.remove("green");
-                document.getElementById(`${attPos2}`).classList.remove("blue");
-               // death(attPos2); 
+                document.getElementById(`${attPos2}`).classList.remove("blue");               
             }
             aFiring = false;
             pFiring2 = false;
@@ -282,8 +273,7 @@ let alienMove = setInterval(
             let a = bunkers.indexOf(alienAttackPos);
             bunkers[a] = -1;
             document.getElementById(`${alienAttackPos}`).classList.remove("green");
-            document.getElementById(`${alienAttackPos}`).classList.remove("blue");
-         //   death(alienAttackPos);   
+            document.getElementById(`${alienAttackPos}`).classList.remove("blue");         
             aFiring=false;    
             alienAttackPos = -1;    
         }
@@ -292,8 +282,7 @@ let alienMove = setInterval(
             let a = bunkers.indexOf(attPos1);
             bunkers[a] = -1;
             document.getElementById(`${attPos1}`).classList.remove("green");
-            document.getElementById(`${attPos1}`).classList.remove("blue");
-           // death(attPos1);    
+            document.getElementById(`${attPos1}`).classList.remove("blue");          
             pFiring1=false;       
             attPos1 = -1;  
         }
@@ -302,8 +291,7 @@ let alienMove = setInterval(
             let a = bunkers.indexOf(attPos2);
             bunkers[a] = -1;
             document.getElementById(`${attPos2}`).classList.remove("green");
-            document.getElementById(`${attPos2}`).classList.remove("blue");
-         //   death(attPos2);      
+            document.getElementById(`${attPos2}`).classList.remove("blue");            
             pFiring2=false;     
             attPos2 = -1;   
         } //end bunker 
@@ -432,8 +420,7 @@ function attack(){
             let a = bunkers.indexOf(attPos1);
             bunkers[a] = -1;
             document.getElementById(`${attPos1}`).classList.remove("green");
-            document.getElementById(`${attPos1}`).classList.remove("blue");
-           // death(attPos1);    
+            document.getElementById(`${attPos1}`).classList.remove("blue");            
             pFiring1=false;       
             attPos1 = -1;  
         }
